@@ -20,17 +20,17 @@ utilizing Audio Worklet, SharedArrayBuffer and Worker.
 ![Design pattern: WebAudio Powerhouse](https://github.com/WebAudio/web-audio-cg/blob/master/audio-device-client/images/img-1-design-pattern.png "Design pattern: WebAudio Powerhouse")
 
 This setup is convenient to take advantage of the code compiled into
-WebAssembly, therefore this new model cuts the engineering cost significantly
+WebAssembly; therefore this new model cuts the engineering cost significantly
 because audio developers can bring existing source codes to the web platform
-with minimum effort. Additionally, deploying to multiple targets by using same
-source code ensures the identical sonic result across various platforms.
-(e.g. encoding/decoding, signal processing or an entire audio application)
+with minimal effort. Additionally, deploying to multiple targets by using the
+same source code ensures identical sonic results across various platforms
+(e.g. encoding/decoding, signal processing or an entire audio application).
 
 However, this convoluted workaround only solves some of problems that this breed
 of audio-centric applications faces. It is still locked by the graph render
 quantum size (128 sample-frames), and there is no unified API that configures
-essential properties of audio rendering mechanism (such as I/O device selection,
-multi-channel I/O support, configurable sample rate and more).
+essential properties of audio rendering mechanism such as I/O device selection,
+multi-channel I/O support, configurable sample rates and more.
 
 The slow adoption of Web Audio API from pro-audio or game industry is the clear
 evidence of why this problem is important to solve.
@@ -51,8 +51,8 @@ evidence of why this problem is important to solve.
 
 ## Non-goals
 
-- Is NOT to replace Web Audio API
-- Contains no media encoding/decoding service
+- Does NOT replace Web Audio API
+- Media encoding/decoding service
 
 
 ## Potential Use Cases
@@ -60,7 +60,7 @@ evidence of why this problem is important to solve.
 - A __teleconference app__ with custom audio processing and direct hardware
   access (e.g. complex echo cancellation, source separation, audio
   spatialization, and auditory scene analysis/music information retrieval)
-- Porting __existing audio engines__ to the web platform with the minimum
+- Porting __existing audio engines__ to the web platform with minimal
   engineering cost.
 - A __hybrid audio application__ that uses Web Audio API's graph system
   (processing and synthesis) and customized audio hardware configuration.
@@ -159,7 +159,7 @@ problems outside of Web Audio API such as I/O hardware configuration.
 ## Conclusion
 
 The Audio Device Client brings the low-level audio functionality to the web
-platform without unnecessary complexity. It provides the closer access to audio
+platform without unnecessary complexity. It provides closer access to audio
 hardware with configurable parameters such as sample rate, callback buffer size
 and channel count. The user code can process data in an isolated global scope
 that runs one a dedicated thread with high priority when permitted. This new

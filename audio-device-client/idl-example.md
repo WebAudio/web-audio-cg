@@ -80,7 +80,7 @@ callback AudioContextCallback = void (sequence<Float32Array> input,
 ### AudioDeviceCallback
 
 A callback function that processes a single `AudioDeviceClient` render quantum.
-The input array will be provided by the system and user files the content of the
+The input array will be provided by the system and user fills the content of the
 `output` array. User also can use the passed `callback` function to explicitly
 pull samples from the associated context’s audio graph.
 
