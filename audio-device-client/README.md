@@ -1,14 +1,15 @@
 # Audio Device Client
 
-This directory is for a exploratory design of a new API for low-level
-audio operation by W3C Audio Community Group.
+This directory is for a exploratory design of a new API for low-level audio
+operation.
 
 - [Explainer](https://github.com/WebAudio/web-audio-cg/blob/master/audio-device-client/explainer.md)
 - [Tentative IDL and code examples](https://github.com/WebAudio/web-audio-cg/blob/master/audio-device-client/idl-example.md)
 - [Introduction deck](https://bit.ly/audio-device-client-deck)
 
-Note that the work is currently under the active development and the
-documentations above are updated frequently.
+Note that the work is currently under active development and documentations
+above are frequently updated.
 
-Any feedback or suggestion can be submitted to the group's issue tracker. Be
-sure to mark the issue with `AudioDeviceClient` label.
+Any feedback or suggestion can be submitted to the group's
+[issue tracker](https://github.com/WebAudio/web-audio-cg/issues). Be sure to
+mark the issue with `AudioDeviceClient` label.

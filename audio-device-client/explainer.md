@@ -1,6 +1,6 @@
 # Audio Device Client: Better and Faster Audio I/O on Web
 
-This is a proposal for a new web API, `Audio Device Client`, which funcions as
+This is a proposal for a new web API, `Audio Device Client`, which functions as
 an intermediate layer between Web Audio API and actual audio devices used by the
 browser. It exposes various low-level properties that have been completely
 hidden or unavailable to developers.
@@ -15,25 +15,26 @@ API's graph rendering mechanism.
 
 To overcome this limitation, some "pro-audio" web apps were designed with a new
 processing model and it bypasses the most of Web Audio API's graph system by
-utilizing Audio Worklet, SharedArrayBuffer and Worker.
+utilizing [Audio Worklet, SharedArrayBuffer and Worker](https://developers.google.com/web/updates/2018/06/audio-worklet-design-pattern#webaudio_powerhouse_audio_worklet_and_sharedarraybuffer).
 
 ![Design pattern: WebAudio Powerhouse](https://github.com/WebAudio/web-audio-cg/blob/master/audio-device-client/images/img-1-design-pattern.png "Design pattern: WebAudio Powerhouse")
 
 This setup is convenient to take advantage of the code compiled into
 WebAssembly; therefore this new model cuts the engineering cost significantly
-because audio developers can bring existing source codes to the web platform
-with minimal effort. Additionally, deploying to multiple targets by using the
-same source code ensures identical sonic results across various platforms
-(e.g. encoding/decoding, signal processing or an entire audio application).
+because audio developers can bring existing source codes (e.g.
+media encoding/decoding, signal processing or an entire audio application)
+to the web platform with minimal effort. Additionally, deploying to multiple
+targets by using the same source code ensures identical sonic results across
+various platforms.
 
-However, this convoluted workaround only solves some of problems that this breed
-of audio-centric applications faces. It is still locked by the graph render
-quantum size (128 sample-frames), and there is no unified API that configures
-essential properties of audio rendering mechanism such as I/O device selection,
-multi-channel I/O support, configurable sample rates and more.
+However, this convoluted workaround only solves some of problems that we face.
+It is still locked by the graph render quantum size (128 sample-frames), and
+there is no unified API that controls essential properties of audio system such
+as I/O device selection, multi-channel I/O support, configurable sample rates
+and more.
 
-The slow adoption of Web Audio API from pro-audio or game industry is the clear
-evidence of why this problem is important to solve.
+Lastly, the slow adoption of Web Audio API from pro-audio or game industry is
+the clear evidence of why this problem is important to solve.
 
 
 ## Key Features
@@ -81,38 +82,35 @@ an instance when the query is acceptable by UA. Otherwise, the promise will be
 rejected.
 
 ```js
-/* async scope */
+async () => {
+  const devices = await navigator.mediaDevices.enumerateDevices();
 
-const devices = await navigator.mediaDevices.enumerateDevices();
+  // Scenario: device #0 and #2 are audio input and output devices respectively.
+  const constraints = {
+    inputDeviceId: devices[0].deviceId,
+    outputDeviceId: devices[2].deviceId,
+    sampleRate: 8000,
+    callbackBufferSize: 512,
+    inputChannelCount: 2,
+    outputChannelCount: 6,
+  };
 
-// An imaginary helper function for selecting device IDs for I/O.
-const audioDeviceIds = getMyAudioDeviceIds(devices);
-
-const clientConstraints = {
-  inputDeviceId: audioDeviceIds.input,
-  outputDeviceId: audioDeviceIds.output,
-  sampleRate: 8000,
-  callbackBufferSize: 512,
-  inputChannelCount: 2,
-  outputChannelCount: 6,
+  const client =
+      await navigator.mediaDevices.getAudioDeviceClient(constraints);
+  await client.addModule('my-client.js');
+  await client.start();
 };
-
-const client =
-    await navigator.mediaDevices.getAudioDeviceClient(clientConstraints);
-await client.addModule('my-client.js');
-await client.start();
 ```
 
-Operations in `AudioDeviceClientGlobalScope` is somewhat similar to Audio
-Worklet. A callback function should be defined with JS and WASM so it can be
-invoked by UA periodically.
+`AudioDeviceClientGlobalScope` is similar to AudioWorkletGlobalScope. In the
+scope, a callback function should be defined with JS and WASM so it can be
+invoked by the user agent periodically (isochronously).
 
-Note that the user code can trigger the `AudioContext` to render its graph by
-calling `contextCallback` function. After that, the rendered data from the
-context can be processed in the client's global scope.
+Note that the user code can trigger the associated `AudioContext` to render its
+graph by calling `contextCallback` function. After that, the rendered data from
+the context can be processed in the same global scope.
 
 ```js
-
 import Processor from './my-audio-processor.js';
 
 // An imaginary function that creates a storage for multi-channel audio data.
@@ -121,7 +119,8 @@ const contextOutput = generateFloat32Arrays(2, callbackBufferSize);
 // Main process function of device client's global scope.
 const process = (input, output, contextCallback) {
   // |input| will be routed to Web Audio API's |context.source| node, and
-  // the result from context renderer will fill up |contextOutput|.
+  // the result from context renderer will fill up |contextOutput|. With the
+  // setting of 512 sample frames, this will pull the graph 4 times.
   contextCallback(input, contextOutput);
 
   // Takes the data rendered by AudioContext and perform custom processing to
@@ -142,7 +141,6 @@ const audioContext = client.getContext();
 const oscillator = new OscillatorNode(audioContext);
 oscillator.connect(audioContext.destination);
 oscillator.start();
-...
 ```
 
 
