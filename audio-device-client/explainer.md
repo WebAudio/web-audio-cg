@@ -73,8 +73,8 @@ the clear evidence of why this problem is important to solve.
 
 As discussed, the Audio Device Client will be an intermediate layer between Web
 Audio API and actual audio devices used by browser's audio service. When it is
-instantiated, UA will configures hardware accordingly and sets up a global scope
-with a audio rendering thread.
+instantiated, UA will configure hardware accordingly and set up a global scope
+with an audio rendering thread.
 
 For querying constraints, a pattern of `mediaDevices.enumerateDevices()` can
 be used. A device client constructor takes a constraint dictionary and generates
