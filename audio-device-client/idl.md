@@ -2,7 +2,7 @@
 development.**
 
 
-# WebIDL (WIP)
+# WebIDL
 
 ### AudioDeviceClientState
 An `enum` represents the current state of the client.
@@ -15,6 +15,16 @@ enum AudioDeviceClientState {
 }
 ```
 
+### AudioDeviceClientMode
+
+```webidl
+enum AudioDeviceClientMode {
+  "aggregate",
+  "raw"
+}
+```
+
+
 ### AudioDeviceClient
 
 The low-level representation of an audio device. Provides various
@@ -24,7 +34,7 @@ Audio API tasks.
 ```webidl
 [Exposed=Window, SecureContext, NoConstructor]
 interface AudioDeviceClient : EventTarget {
-  readonly attribute USVString deviceId;
+  readonly attribute USVString id;
   readonly attribute float sampleRate;
   readonly attribute unsigned callbackBufferSize;
   readonly attribute unsigned inputChannelCount;
@@ -45,11 +55,13 @@ A dictionary describes user-specified device constraints. It can be passed when
 
 ```webidl
 dictionary AudioDeviceClientConstraints {
-  USVString deviceId;
+  USVString inputDeviceId;
+  USVString outputDeviceId;
   optional float sampleRate;
-  unsigned callbackBufferSize = 128;
+  optional unsigned callbackBufferSize;
   unsigned inputChannelCount = 0;
   unsigned outputChannelCount = 2;
+  AudioDeviceClientMode mode = "aggregate";
 }
 ```
 
@@ -90,6 +102,24 @@ callback AudioDeviceCallback = void (sequence<Float32Array> input,
                                      AudioContextCallback callback);
 ```
 
+### AudioDeviceInputCallback
+
+A callback function that is invoked when the input data from the underlying
+audio hardware is ready.
+
+```webidl
+callback AudioDeviceCallback = void (sequence<Float32Array> input);
+```
+
+### AudioDeviceOutputCallback
+
+A callback function that is invoked by the underlying to pull the output data
+from the device client.
+
+```webidl
+callback AudioDeviceCallback = void (sequence<Float32Array> output);
+```
+
 ### AudioDeviceClientGlobalScope
 
 This global scope is similar to `AudioWorkletGlobalScope` and runs on a
@@ -100,12 +130,13 @@ should not be permitted.
 
 ```webidl
 [Exposed=AudioDeviceClient]
-interface AudioDeviceClientGlobalScope {
-  void close();
+interface AudioDeviceClientGlobalScope : EventTarget {
   void postMessage(any message, sequence<object> transfer);
   void setDeviceCallback(AudioDeviceCallback callback);
-  attribute readonly DOMHighResTimeStamp currentTime;
-  readonly attribute float renderCapability;
+  readonly attribute DOMHighResTimeStamp currentTime;
+  readonly attribute unsigned callbackBufferSize;
+  readonly attribute float renderCapacity;
+  readonly attribute float sampleRate;
   attribute EventHandler onerror;
   attribute EventHandler onmessage;
   attribute EventHandler onmessageerror;

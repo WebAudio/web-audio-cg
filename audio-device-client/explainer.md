@@ -151,7 +151,7 @@ oscillator.start();
 
 This idea was quickly turned down by Audio Working Group because it changes the
 fundamental of Web Audio API implementation. Also this does not address
-problems outside of Web Audio API such as I/O hardware configuration.
+problems outside of Web Audio API such as audio hardware I/O configuration.
 
 
 ## Conclusion
